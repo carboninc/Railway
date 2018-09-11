@@ -122,7 +122,7 @@ module Routes
     select_station
     selected_start_station = gets.chomp.to_i
 
-    error_selecting_option(create_route) if no_option_in_stations(selected_start_station)
+    error_selecting_option(:create_route) if no_option_in_stations(selected_start_station)
 
     @start_station = search_station(selected_start_station)
   end
@@ -132,7 +132,7 @@ module Routes
     select_station
     selected_end_station = gets.chomp.to_i
 
-    error_selecting_option(create_route) if no_option_in_stations(selected_end_station)
+    error_selecting_option(:create_route) if no_option_in_stations(selected_end_station)
 
     @end_station = search_station(selected_end_station)
   end
