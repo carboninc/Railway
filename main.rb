@@ -16,6 +16,9 @@ require_relative 'core/modules/app/trains'
 # Check Methods Module
 require_relative 'core/modules/checks'
 
+# Helpers Methods Module
+require_relative 'core/modules/helpers'
+
 # Classes
 require_relative 'core/stations/station'
 
@@ -36,6 +39,7 @@ class Railway
   include Routes
   include Trains
   include Checks
+  include Helpers
 end
 
 puts 'Добро пожаловать в программу по управлению железнодорожной станцией!'

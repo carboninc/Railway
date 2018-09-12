@@ -1,8 +1,5 @@
+# Trains Module
 module Trains
-  def select_train
-    Train.all.each.with_index(1) { |train, index| puts "#{index}. Номер поезда: #{train[0]}" }
-  end
-
   def create_train
     puts 'Укажите тип поезда:'
 
@@ -25,14 +22,12 @@ module Trains
       PassengerTrain.new(number, manufacturer)
     else
       puts 'Ошибка ввода, выберите доступный вариант'
-      puts '-----------'
-      puts ''
+      separator
       create_train
     end
 
     puts 'Поезд создан!'
-    puts '-----------'
-    puts ''
+    separator
     trains_menu
   rescue RuntimeError => e
     puts "Ошибка: #{e.message}"
@@ -49,8 +44,7 @@ module Trains
     train = gets.chomp.to_i
     if train > Train.all.length || train < 1
       puts 'Ошибка! Такого поезда нет, попробуйте еще раз.'
-      puts '-----------'
-      puts ''
+      separator
       return add_train_route
     end
     train_numbers = Train.all.keys
@@ -61,8 +55,7 @@ module Trains
     route = gets.chomp.to_i
     if route > Route.all.length || route < 1
       puts 'Ошибка! Такого маршрута нет, попробуйте еще раз.'
-      puts '-----------'
-      puts ''
+      separator
       return add_train_route
     end
     selected_route = Route.all[route - 1]
@@ -70,8 +63,7 @@ module Trains
     selected_train.add_route(selected_route)
 
     puts 'Маршрут добавлен!'
-    puts '-----------'
-    puts ''
+    separator
     trains_menu
   end
 
@@ -83,8 +75,7 @@ module Trains
     train = gets.chomp.to_i
     if train > Train.all.length || train < 1
       puts 'Ошибка! Такого поезда нет, попробуйте еще раз.'
-      puts '-----------'
-      puts ''
+      separator
       return attach_wagon
     end
     train_numbers = Train.all.keys
@@ -106,8 +97,7 @@ module Trains
     selected_train.add_wagon(wagon)
 
     puts 'Вагон добавлен!'
-    puts '-----------'
-    puts ''
+    separator
     trains_menu
   end
 
@@ -119,8 +109,7 @@ module Trains
     train = gets.chomp.to_i
     if train > Train.all.length || train < 1
       puts 'Ошибка! Такого поезда нет, попробуйте еще раз.'
-      puts '-----------'
-      puts ''
+      separator
       return unhook_wagon
     end
     train_numbers = Train.all.keys
@@ -128,16 +117,14 @@ module Trains
 
     if selected_train.wagons.length.zero?
       puts 'У данного поезда нет вагонов.'
-      puts '-----------'
-      puts ''
+      separator
       return trains_menu
     end
 
     selected_train.delete_wagon
 
     puts 'Вагон удален!'
-    puts '-----------'
-    puts ''
+    separator
     trains_menu
   end
 
@@ -149,8 +136,7 @@ module Trains
     train = gets.chomp.to_i
     if train > Train.all.length || train < 1
       puts 'Ошибка! Такого поезда нет, попробуйте еще раз.'
-      puts '-----------'
-      puts ''
+      separator
       return select_train
     end
     train_numbers = Train.all.keys
@@ -158,8 +144,7 @@ module Trains
 
     if selected_train.wagons.length.zero?
       puts 'У данного поезда нет вагонов.'
-      puts '-----------'
-      puts ''
+      separator
       return trains_menu
     end
 
@@ -171,8 +156,7 @@ module Trains
         puts "#{index}. Вагон: #{wagon.number}. Тип: #{wagon.type}. Кол-во свободного объема: #{wagon.free_volume}. Кол-во занятого объема: #{wagon.busy_volume}"
       end
     end
-    puts '-----------'
-    puts ''
+    separator
     trains_menu
   end
 
@@ -184,8 +168,7 @@ module Trains
     train = gets.chomp.to_i
     if train > Train.all.length || train < 1
       puts 'Ошибка! Такого поезда нет, попробуйте еще раз.'
-      puts '-----------'
-      puts ''
+      separator
       return forward_train
     end
 
@@ -193,15 +176,13 @@ module Trains
     selected_train = Train.all[train_numbers[train - 1]]
     if selected_train.route == ''
       puts 'Ошибка! Не назначен маршрут для этого поезда.'
-      puts '-----------'
-      puts ''
+      separator
       return trains_menu
     end
     move = selected_train.move_forward
 
     puts "Поезд прибыл на станцию: #{move.name}"
-    puts '-----------'
-    puts ''
+    separator
     trains_menu
   end
 
@@ -213,8 +194,7 @@ module Trains
     train = gets.chomp.to_i
     if train > Train.all.length || train < 1
       puts 'Ошибка! Такого поезда нет, попробуйте еще раз.'
-      puts '-----------'
-      puts ''
+      separator
       return backward_train
     end
 
@@ -222,15 +202,13 @@ module Trains
     selected_train = Train.all[train_numbers[train - 1]]
     if selected_train.route == ''
       puts 'Ошибка! Не назначен маршрут для этого поезда.'
-      puts '-----------'
-      puts ''
+      separator
       return trains_menu
     end
     move = selected_train.move_backward
 
     puts "Поезд прибыл на станцию: #{move.name}"
-    puts '-----------'
-    puts ''
+    separator
     trains_menu
   end
 
@@ -242,8 +220,7 @@ module Trains
     train = gets.chomp.to_i
     if train > Train.all.length || train < 1
       puts 'Ошибка! Такого поезда нет, попробуйте еще раз.'
-      puts '-----------'
-      puts ''
+      separator
       return select_train
     end
     train_numbers = Train.all.keys
@@ -251,8 +228,7 @@ module Trains
 
     if selected_train.wagons.length.zero?
       puts 'У данного поезда нет вагонов.'
-      puts '-----------'
-      puts ''
+      separator
       return trains_menu
     end
 
@@ -267,8 +243,7 @@ module Trains
     wagon = gets.chomp.to_i
     if wagon > Wagon.all.length || wagon < 1
       puts 'Ошибка! Такого вагона нет, попробуйте еще раз.'
-      puts '-----------'
-      puts ''
+      separator
       return take_wagon_place_or_volume
     end
     selected_wagon = selected_train.wagons[wagon - 1]
@@ -282,8 +257,7 @@ module Trains
       selected_wagon.take_volume(value)
       puts 'Объем занят:'
     end
-    puts '-----------'
-    puts ''
+    separator
     trains_menu
   rescue RuntimeError => e
     puts "Ошибка: #{e}"

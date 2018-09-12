@@ -1,3 +1,4 @@
+# Module Routes
 module Routes
   def create_route
     check_stations
@@ -21,34 +22,13 @@ module Routes
 
     check_stations
 
-    puts 'Выберите маршрут для добавления станции:'
-    select_route
-    select = gets.chomp.to_i
-    if select > Route.all.length || select < 1
-      puts 'Ошибка! Такого маршрута нет, попробуйте еще раз.'
-      separator
-      return add_station
-    end
-    selected_route = Route.all[select - 1]
+    select_route(:add_station)
 
-    puts 'Укажите название станции:'
-    select_station
-    new_station = gets.chomp.to_i
-    if new_station > Station.all.length || new_station < 1
-      puts 'Ошибка! Такой станции нет, попробуйте еще раз.'
-      separator
-      return add_station
-    end
-    station_names = Station.all.keys
-    selected_station = Station.all[station_names[new_station - 1]]
+    select_station(:add_station)
 
-    if selected_station == selected_route.stations[new_station - 1]
-      puts 'Ошибка! Такая станция уже есть в списке, выберите другую.'
-      separator
-      return routes_menu
-    end
+    check_of_identical_stations if @selected_station == @selected_route.stations[@station - 1]
 
-    selected_route.add_station(selected_station)
+    @selected_route.add_station(@selected_station)
 
     puts 'Станция добавлена!'
     separator
@@ -60,36 +40,23 @@ module Routes
 
     check_stations
 
-    puts 'Выберите маршрут для удаления станции:'
-    select_route
-    select = gets.chomp.to_i
-    if select > Route.all.length || select < 1
-      puts 'Ошибка! Такого маршрута нет, попробуйте еще раз.'
-      separator
-      return delete_station
-    end
-    selected_route = Route.all[select - 1]
+    select_route(:delete_station)
 
     puts 'Укажите название станции:'
-    selected_route.stations.each.with_index(1) do |station, index|
-      puts "#{index}. #{station.name}"
-    end
-    select_station = gets.chomp.to_i
-    if select_station > selected_route.stations.length || select_station < 1
-      puts 'Ошибка! Такой станции нет, попробуйте еще раз.'
-      separator
-      return delete_station
-    end
-    selected_delete_station = selected_route.stations[select_station - 1]
+    select_station_in_route
 
-    if selected_delete_station == selected_route.stations.first || selected_delete_station == selected_route.stations.last
-      puts 'Ошибка! Данную станцию нельзя удалить.'
-      separator
-      return routes_menu
-    end
-    selected_route.delete_station(selected_delete_station)
+    check_first_and_last_station
+
+    @selected_route.delete_station(@selected_delete_station)
 
     puts 'Станция удалена!'
+    separator
+    routes_menu
+  end
+
+  def show_routes
+    puts 'Список маршрутов:'
+    routes_list
     separator
     routes_menu
   end
@@ -98,18 +65,11 @@ module Routes
     check_routes
 
     puts 'Выберите маршрут для просмотра списка станций:'
-    select_route
-    selected_route = gets.chomp.to_i
-    if selected_route > Route.all.length || selected_route < 1
-      puts 'Ошибка! Такого маршрута нет, попробуйте еще раз.'
-      separator
-      return show_stations_in_route
-    end
+    routes_list
+    route = gets.chomp.to_i
+    error_selecting_option(:show_stations_in_route) if no_option_in_routes?(route)
 
-    puts 'Станции выбранного маршрута:'
-    Route.all[selected_route - 1].stations.each do |station|
-      puts station.name
-    end
+    stations_of_selected_route(route)
 
     separator
     routes_menu
@@ -117,40 +77,60 @@ module Routes
 
   private
 
+  def stations_of_selected_route(route)
+    puts 'Станции выбранного маршрута:'
+    Route.all[route - 1].stations.each do |station|
+      puts station.name
+    end
+  end
+
   def select_start_station
     puts 'Выберите начальную станцию маршрута:'
-    select_station
+    stations_list
     selected_start_station = gets.chomp.to_i
 
-    error_selecting_option(:create_route) if no_option_in_stations(selected_start_station)
+    error_selecting_option(:create_route) if no_option_in_stations?(selected_start_station)
 
     @start_station = search_station(selected_start_station)
   end
 
   def select_end_station
     puts 'Выберите конечную станцию маршрута:'
-    select_station
+    stations_list
     selected_end_station = gets.chomp.to_i
 
-    error_selecting_option(:create_route) if no_option_in_stations(selected_end_station)
+    error_selecting_option(:create_route) if no_option_in_stations?(selected_end_station)
 
     @end_station = search_station(selected_end_station)
   end
 
-  def select_route
-    Route.all.each.with_index(1) do |route, index|
-      puts "#{index}. / Маршрут: #{route.stations.first.name} - #{route.stations.last.name}"
+  def stations_list_in_route
+    @selected_route.stations.each.with_index(1) do |station, index|
+      puts "#{index}. #{station.name}"
     end
   end
 
-  def show_routes
-    puts 'Список маршрутов:'
-    select_route
-    separator
-    routes_menu
+  def select_station_in_route
+    stations_list_in_route
+    station = gets.chomp.to_i
+    if station > @selected_route.stations.length || station < 1
+      puts 'Ошибка! Такой станции нет, попробуйте еще раз.'
+      separator
+      return delete_station
+    end
+    @selected_delete_station = @selected_route.stations[station - 1]
   end
 
-  def select_station
-    Station.all.each.with_index(1) { |name, index| puts "#{index}. #{name}" }
+  def check_first_and_last_station
+    first_station = @selected_route.stations.first
+    last_station = @selected_route.stations.last
+    stations = @selected_route.stations
+
+    check_first_and_last_station = proc do
+      puts 'Ошибка! Данную станцию нельзя удалить.'
+      separator
+      routes_menu
+    end
+    check_first_and_last_station.call if stations.include? [first_station, last_station]
   end
 end

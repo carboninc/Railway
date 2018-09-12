@@ -57,15 +57,6 @@ module Routing
 
   private
 
-  def error_selecting_option(route)
-    error = lambda do
-      puts 'Ошибка ввода, попробуйте заново.'
-      separator
-      route
-    end
-    error.call
-  end
-
   def exit
     exit = proc { abort('Всего доброго!') }
     exit.call

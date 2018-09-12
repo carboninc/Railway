@@ -29,8 +29,21 @@ module Checks
     check_trains.call if Train.all.nil?
   end
 
-  def separator
-    puts '-----------'
-    puts ''
+  def check_of_identical_stations
+    check_of_identical_stations = proc do
+      puts 'Ошибка! Такая станция уже есть в списке, выберите другую.'
+      separator
+      add_station
+    end
+    check_of_identical_stations.call
+  end
+
+  # Check Option In Menu
+  def no_option_in_stations?(selected)
+    selected > Station.all.length || selected < 1
+  end
+
+  def no_option_in_routes?(selected)
+    selected > Route.all.length || selected < 1
   end
 end
