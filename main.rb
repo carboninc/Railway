@@ -12,6 +12,7 @@ require_relative 'core/modules/routing/routing'
 require_relative 'core/modules/app/stations'
 require_relative 'core/modules/app/routes'
 require_relative 'core/modules/app/trains'
+require_relative 'core/modules/app/wagons'
 
 # Check Methods Module
 require_relative 'core/modules/checks'
@@ -38,6 +39,7 @@ class Railway
   include Stations
   include Routes
   include Trains
+  include Wagons
   include Checks
   include Helpers
 end

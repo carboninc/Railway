@@ -37,7 +37,7 @@ module Stations
 
     select_station(:show_trains)
 
-    trains_list_in_station(selected_station)
+    trains_list_in_station
 
     separator
     stations_menu
@@ -45,11 +45,11 @@ module Stations
 
   private
 
-  def trains_list_in_station(selected_station)
+  def trains_list_in_station
     puts 'Список поездов:'
-    selected_station.traverse_train do |train, index|
-      puts "#{index}. Поезд: #{train.number}. Тип: #{train.class.name}. \
-       Кол-во вагонов: #{train.wagons.length}."
+    @selected_station.traverse_train do |train, index|
+      puts "#{index}. Поезд: #{train.number}. Тип: #{train.class.name}." \
+          "Кол-во вагонов: #{train.wagons.length}."
     end
   end
 end

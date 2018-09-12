@@ -126,11 +126,11 @@ module Routes
     last_station = @selected_route.stations.last
     stations = @selected_route.stations
 
-    check_first_and_last_station = proc do
+    check_station = proc do
       puts 'Ошибка! Данную станцию нельзя удалить.'
       separator
       routes_menu
     end
-    check_first_and_last_station.call if stations.include? [first_station, last_station]
+    check_station.call if stations.include?(first_station) || stations.include?(last_station)
   end
 end
