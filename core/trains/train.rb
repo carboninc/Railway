@@ -2,8 +2,11 @@
 class Train
   include Manufacturer
   include InstanceCounter
+  include Validation
+  extend Accessors
 
-  attr_accessor :speed
+  attr_accessor_with_history :speed
+  strong_attr_accessor :speed, Integer
   attr_reader :number, :route, :wagons
 
   NUMBER_FORMAT = /^(\d|[a-zа-я]){3}-?(\d|[a-zа-я]){2}$/i
@@ -20,22 +23,20 @@ class Train
     end
   end
 
+  validate :number, :presence
+  validate :number, :format, NUMBER_FORMAT
+  validate :manufacturer, :presence
+
   def initialize(number, manufacturer)
-    @number = number.to_s
+    @number = number
     @manufacturer = manufacturer.to_s
     @wagons = []
     @speed = 0
     @route = ''
     Train.trains ||= {}
-    validate!
+    validate! if self.class == Train
     Train.trains[number] = self
     register_instance
-  end
-
-  def valid?
-    validate!
-  rescue RuntimeError
-    false
   end
 
   def add_wagon(wagon)
@@ -98,12 +99,5 @@ class Train
 
   def last_station
     return @route.stations[-2] if @current_station == @route.stations.length - 1
-  end
-
-  def validate!
-    raise 'Номер поезда не должен быть пустым!' if number.empty?
-    raise 'Укажите номер поезда в формате ...-.. (любые символы и цифры)' if number !~ NUMBER_FORMAT
-    raise 'Укажите производителя поезда!' if manufacturer.empty?
-    true
   end
 end

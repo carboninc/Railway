@@ -1,6 +1,8 @@
 # Shared Modules
 require_relative 'core/modules/manufacturer'
 require_relative 'core/modules/instance_counter'
+require_relative 'core/modules/accessors.rb'
+require_relative 'core/modules/validation.rb'
 
 # Menu Module
 require_relative 'core/modules/menu/menu'

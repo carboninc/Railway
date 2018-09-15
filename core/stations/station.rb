@@ -1,6 +1,7 @@
 # Railway Station
 class Station
   include InstanceCounter
+  include Validation
 
   attr_reader :name
 
@@ -12,19 +13,17 @@ class Station
     end
   end
 
+  validate :name, :presence
+  validate :name, :name_length
+
   def initialize(name)
-    @name = name.to_s
+    @name = name
     @trains = []
     self.class.stations ||= {}
     validate!
+    check_stations!
     self.class.stations[name] = self
     register_instance
-  end
-
-  def valid?
-    validate!
-  rescue RuntimeError
-    false
   end
 
   def train_arrival(train)
@@ -51,9 +50,7 @@ class Station
 
   private
 
-  def validate!
-    raise 'Название станции не может быть пустым' if name.empty?
-    raise 'Название станции должно быть не менее 3 символов' if name.length < 3
+  def check_stations!
     self.class.stations.each_key do |key|
       return raise 'Такая станция уже существует' if key == name
     end
