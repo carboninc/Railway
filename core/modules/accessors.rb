@@ -5,7 +5,8 @@ module Accessors
       var_name = "@#{name}".to_sym
       var_history = "@#{name}_history".to_sym
 
-      create_history_reader_methods(name, var_name, var_history)
+      define_method(name) { instance_variable_get(var_name) }
+      define_method("#{name}_history") { instance_variable_get(var_history) }
 
       define_method("#{name}=".to_sym) do |value|
         instance_variable_set(var_name, value)
@@ -20,19 +21,8 @@ module Accessors
 
     define_method(name) { instance_variable_get(var_name) }
     define_method("#{name}=".to_sym) do |value|
-      begin
-        raise "Значение #{name} не является экземпляром класса #{type}" unless value.is_a? type
-        instance_variable_set(var_name, value)
-      rescue StandardError => e
-        puts "Ошибка: #{e.message}"
-      end
+      raise "Значение #{name} не является экземпляром класса #{type}" unless value.is_a? type
+      instance_variable_set(var_name, value)
     end
-  end
-
-  private
-
-  def create_history_reader_methods(name, var_name, var_history)
-    define_method(name) { instance_variable_get(var_name) }
-    define_method("#{name}_history") { instance_variable_get(var_history) }
   end
 end

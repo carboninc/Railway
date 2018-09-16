@@ -13,11 +13,11 @@ class Route
   end
 
   validate :stations, :type, Station
-  validate :stations, :compare_first_end_station
 
   def initialize(start_station, end_station)
     @stations = [start_station, end_station]
     validate!
+    compare_first_end_station
     self.class.routes ||= []
     self.class.routes << self
     register_instance
@@ -29,5 +29,12 @@ class Route
 
   def delete_station(name_station)
     @stations.delete_at(@stations.find_index(name_station))
+  end
+
+  private
+
+  def compare_first_end_station
+    raise 'Станция не может быть одновременно начальной и конечной' if @stations[0] == @stations[-1]
+    true
   end
 end
